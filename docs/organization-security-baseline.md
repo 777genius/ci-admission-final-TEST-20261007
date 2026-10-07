@@ -1,0 +1,92 @@
+# Organization security baseline
+
+This is a versioned snapshot of organization policy and observed GitHub state,
+not a substitute for querying GitHub before a security-sensitive change.
+
+## Enforced defaults for new repositories
+
+As observed on 2026-08-11, the organization has two live, enforced code-security
+default configurations:
+
+- ID `266049`, `Public repository security baseline`, is the default for new
+  public repositories. Dependency graph, Dependabot alerts and security updates,
+  GitHub Advanced Security, CodeQL default setup, secret scanning, and push
+  protection are enabled.
+- ID `266048`, `Free dependency security baseline`, is the default for new
+  private and internal repositories. Dependency graph, Dependabot alerts, and
+  Dependabot security updates are enabled. Paid security features remain
+  disabled.
+
+The existing private `agent-teams-platform` repository, ID `1319378484`, was
+also observed attached to enforced configuration `266048`. Separate evidence
+records preserve the exact API endpoint and method for that attachment, the
+Dependabot alerts HTTP `204`, and automated security fixes enabled and unpaused.
+The organization GHAS billing repository count of `0` is recorded separately as
+an organization observation, so repository attachments do not duplicate it.
+This is dated evidence, not continuous monitoring.
+
+The organization API reported `two_factor_requirement_enabled: false` on
+2026-08-10. The owner deferred enabling that requirement. The snapshot records
+the membership risk and requires reassessment before organization membership
+changes; it must not claim `true` unless a later API observation confirms it.
+
+The live source of truth is the GitHub organization configuration API. The
+checked-in snapshot is strict-schema validated and reviewable, but validation
+does not continuously compare it with GitHub.
+
+## Dependabot ownership
+
+`Security updates only` means Dependabot may open vulnerability-remediation pull
+requests from repository alerts. It does not authorize scheduled Dependabot
+version-update entries in `.github/dependabot.yml`. Renovate remains the owner of
+routine version updates, so the two systems must not compete for those pull
+requests. Deleted fixtures are not retained as live policy evidence.
+
+## Transfers and required-check exception
+
+Organization defaults target new repositories of the matching visibility. A
+transferred repository must not be assumed to have received the current default:
+audit it after transfer and explicitly apply configuration `266049` or `266048`
+as appropriate.
+
+The canonical plan-tier exception is
+`platform-private-required-checks-github-free` in the code-security snapshot.
+The executable-specification and Actions snapshots reference that ID instead of
+copying its definition. It does not make local or CI checks optional; reassess
+the exception after a visibility or plan change.
+
+## Dated required-check observation
+
+The executable-specification ledger records the active public-repository
+rulesets observed through the GitHub API on 2026-08-14, including each ruleset
+ID, check context, and integration ID. GitHub Actions checks are app-bound to
+integration `15368`; ReviewRouter checks are app-bound to integration `3599233`.
+The new `extension-foundation` repository has its own active ruleset observation.
+The private Platform rulesets endpoint still returns the documented GitHub Free
+`403` exception.
+This checked-in evidence is not continuous monitoring and must be refreshed
+before relying on live enforcement.
+
+Pull request approval is not required in this snapshot. Requiring one approval
+while organization review approval is disabled would deadlock the current
+single-member organization; CODEOWNERS may document ownership but does not
+change that approval rule.
+
+## Actions rollout is separate
+
+Code-security configuration enforcement does not prove GitHub Actions policy
+enforcement. The last authoritative Actions API observation records read-only
+default workflow permissions, disabled workflow approval, all-repository
+coverage, and required immutable commit SHAs for external actions. A 2026-08-14
+refresh attempt returned `403` without the required read-only organization
+scope, so it did not replace that observation or become authoritative. Platform
+retains exception
+`platform-private-required-checks-github-free` only for protected required
+checks; it does not weaken the organization-wide action-reference policy.
+
+The Bot-author owner-bootstrap fields in the dated Actions snapshot are
+historical. Follow the [maintained commit and PR author policy](../GOVERNANCE.md#commit-and-pull-request-authorship)
+for current release instructions. Native commit-email metadata restrictions
+failed TEST merge qualification and do not prove merge prevention. The trusted
+exact-head status requires separately qualified repository installation; it is
+not an automatically inherited organization security default.

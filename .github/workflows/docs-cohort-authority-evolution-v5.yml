@@ -1,0 +1,7 @@
+name: TEST inert authority fixture
+on: workflow_dispatch
+jobs:
+  fixture:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo TEST fixture
